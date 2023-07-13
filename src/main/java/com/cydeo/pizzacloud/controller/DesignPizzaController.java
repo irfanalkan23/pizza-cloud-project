@@ -5,18 +5,27 @@ import com.cydeo.pizzacloud.model.Pizza;
 import com.cydeo.pizzacloud.repository.PizzaRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.UUID;
 
 @Controller
-
+@RequestMapping("/design")
 public class DesignPizzaController {
 
-    private PizzaRepository pizzaRepository;
+    private final PizzaRepository pizzaRepository;
 
-    @PostMapping
+    public DesignPizzaController(PizzaRepository pizzaRepository) {
+        this.pizzaRepository = pizzaRepository;
+    }
+
+    @GetMapping
     public String showDesignForm(Model model) {
+
+        model.addAttribute("pizza", new Pizza());
 
         model.addAttribute("cheeses", DataGenerator.cheeseTypeList);
         model.addAttribute("sauces", DataGenerator.sauceTypeList);
@@ -27,7 +36,7 @@ public class DesignPizzaController {
     }
 
     @PostMapping("/createPizza")
-    public String processPizza(Pizza pizza) {
+    public String processPizza(@ModelAttribute("pizza") Pizza pizza) {
 
         pizza.setId(UUID.randomUUID());
         pizzaRepository.createPizza(pizza);
